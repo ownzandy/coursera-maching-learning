@@ -71,14 +71,18 @@ a3 = sigmoid(z3)';
 h = a3;
 ordered_array = (1:size(a3,1))';
 
+ymat = [];
 for t = 1:m
-	d3 = a3(:, t) - (y(t, :) == ordered_array);
-	gz2 = [ones(m, 1) sigmoidGradient(z2)];
-	d2 = Theta2'*d3.*gz2(t, :)';
-	d2 = d2(2:end);
-	Theta1_grad = Theta1_grad + d2*a1(:, t)';
-	Theta2_grad = Theta2_grad + d3*a2(:, t)';
+	newmat = y(t, :) == ordered_array;
+	ymat = [ymat newmat];
 end
+
+d3 = a3 - ymat;
+gz2 = [ones(m, 1) sigmoidGradient(z2)];
+d2 = Theta2'*d3.*gz2';
+d2 = d2(2:end, :);
+Theta1_grad = d2*a1';
+Theta2_grad = d3*a2';
 
 Theta1(:, 1) = 0;
 Theta2(:, 1) = 0;
